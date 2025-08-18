@@ -1,0 +1,13 @@
+.videoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* 手機（≤640px）單欄 */
+@media (max-width: 640px) {
+  .videoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
