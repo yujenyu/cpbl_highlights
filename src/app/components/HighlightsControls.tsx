@@ -3,42 +3,19 @@
 import { useMemo, useState } from 'react';
 import HighlightsList from './HighlightsList';
 
-// 球隊常見別名
-const TEAM_ALIASES: Record<string, string[]> = {
-  樂天: ['樂天', '樂天桃猿', '桃猿', 'Rakuten'],
-  中信: ['中信', '中信兄弟', '兄弟', 'Brothers'],
-  富邦: ['富邦', '富邦悍將', '悍將', 'Fubon'],
-  統一: ['統一', '統一獅', '獅', 'Uni-Lions', '7-ELEVEn'],
-  味全: ['味全', '味全龍', '龍', 'Wei Chuan', 'Dragons'],
-  台鋼: ['台鋼', '台鋼雄鷹', '雄鷹', 'TSG', 'Hawks'],
-};
-
-const TEAMS = Object.keys(TEAM_ALIASES);
-
-// 逗號分隔字串（給後端 keywords）
-function toCSV(tokens: string[]) {
-  return tokens
-    .map((t) => t.trim())
-    .filter(Boolean)
-    .join(',');
-}
+const TEAMS = ['樂天', '中信', '富邦', '統一', '味全', '台鋼'] as const;
 
 export default function HighlightsControls() {
   // 單選球隊
-  const [team, setTeam] = useState<string | null>(null);
+  const [team, setTeam] = useState<(typeof TEAMS)[number] | null>(null);
 
-  // 送給後端的 keywords
-  const keywordsCSV = useMemo(() => {
-    const tokens: string[] = [];
-    if (team) tokens.push(...TEAM_ALIASES[team]); // 把隊名別名也加入（擴散成超集）
-    if (tokens.length === 0) tokens.push('全場精華'); // 未選球隊 → 預設關鍵字
-    return toCSV(tokens);
-  }, [team]);
+  // 後端 keywords：固定只查「全場精華」（不做任何別名/OR 擴散）
+  const keywords = '全場精華';
 
-  // 前端做 AND 收斂：標題必須同時含有的字（小寫比對）
+  // 前端 AND 收斂：標題同時包含「全場精華」以及（若有）所選隊名
   const titleMustAll = useMemo(() => {
     const must = ['全場精華'];
-    if (team) must.push(team);
+    if (team) must.push(team); // 不用別名，直接用 UI 上點選的隊名字串
     return must;
   }, [team]);
 
@@ -80,10 +57,10 @@ export default function HighlightsControls() {
 
       {/* 把條件給原本的列表元件 */}
       <HighlightsList
-        keywords={keywordsCSV} // 逗號分隔（OR 擴散）
+        keywords={keywords} // 僅「全場精華」
         recentDays={30}
         pageSize={24}
-        titleMustAll={titleMustAll} // AND 收斂（前端嚴格過濾）
+        titleMustAll={titleMustAll} // AND：全場精華 +（可選）隊名
       />
     </section>
   );
