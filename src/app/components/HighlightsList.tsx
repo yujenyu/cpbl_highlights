@@ -48,9 +48,6 @@ export default function HighlightsList({
   // 是否至少發出過一次請求（用來控制空狀態不要閃）
   const [hasRequested, setHasRequested] = useState(false);
 
-  // 這一輪是否完全沒結果
-  const [noResults, setNoResults] = useState(false);
-
   // 用 localDays 來動態擴張時間窗（起始用 props.recentDays）
   const [localDays, setLocalDays] = useState<number>(recentDays);
 
@@ -109,7 +106,6 @@ export default function HighlightsList({
 
         // 判斷整輪是否為 0 筆（避免空態閃爍）
         const totalAfter = seenIds.size + unique.length;
-        setNoResults(totalAfter === 0);
       } catch (e: any) {
         setError(e?.message ?? 'Fetch failed');
       } finally {
@@ -132,7 +128,6 @@ export default function HighlightsList({
 
     // 立刻進入 loading，直接呼叫 load（不要 setTimeout）
     setHasRequested(false);
-    setNoResults(false);
     setLoading(true);
     load(null);
   }, [keywords, recentDays, pageSize]);
@@ -183,7 +178,7 @@ export default function HighlightsList({
     });
   }, [videos, titleMustAll]);
 
-  const shouldShowEmpty = hasRequested && !loading && noResults;
+  const shouldShowEmpty = hasRequested && !loading && videosShown.length === 0;
 
   return (
     <>
