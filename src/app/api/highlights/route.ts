@@ -5,7 +5,7 @@ export const runtime = 'edge';
 
 const YT = 'https://www.googleapis.com/youtube/v3';
 const API_KEY = process.env.YOUTUBE_API_KEY!;
-const FULLGAME_PLAYLIST_ID = process.env.CPBL_FULLGAME_PLAYLIST_ID!;
+const FULLGAME_PLAYLIST_ID = 'PL5xHQ8qHh3i-_s12NFmU2B2zhdFluJLkc';
 
 // 回傳給前端的影片物件型別
 type Video = {
