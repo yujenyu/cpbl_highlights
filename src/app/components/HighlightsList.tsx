@@ -82,7 +82,9 @@ export default function HighlightsList({
       qs.set('days', String(localDaysRef.current)); // 用動態時間窗, 用 ref 讀最新 days
       if (cursor) qs.set('pageToken', cursor);
       // ts 用於躲過中繼層快取
-      qs.set('ts', String(Date.now()));
+      // qs.set('ts', String(Date.now()));
+      // 把 AND 條件交給後端
+      titleMustAll.forEach((t) => qs.append('mustAll', t));
 
       try {
         const res = await fetch(`${baseUrl}/api/highlights?${qs.toString()}`, {
