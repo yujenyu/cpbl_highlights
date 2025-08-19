@@ -101,9 +101,11 @@ export async function GET(req: Request) {
 
   // 使用 CDN 快取（force-cache）+ ISR（revalidate: 90）降低連續請求延遲與 API 壓力
   const ytRes = await fetch(`${YT}/playlistItems?${params}`, {
-    cache: 'force-cache',
-    next: { revalidate: 90 },
+    // 關掉 Next.js 的 data/fetch cache
+    cache: 'no-store',
+    next: { revalidate: 0 },
   });
+
   if (!ytRes.ok) {
     return NextResponse.json(
       { error: `YouTube HTTP ${ytRes.status}` },
@@ -153,7 +155,10 @@ export async function GET(req: Request) {
   return new NextResponse(JSON.stringify(body), {
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 's-maxage=90, stale-while-revalidate=60',
+      // 瀏覽器端完全不快取
+      'Cache-Control': 'private, no-store',
+      // Vercel Edge/中繼層可快取 90 秒 + SWR 60 秒
+      'CDN-Cache-Control': 'public, s-maxage=90, stale-while-revalidate=60',
     },
   });
 }
