@@ -51,7 +51,7 @@ export default function HighlightsList({
   // 這一輪是否完全沒結果
   const [noResults, setNoResults] = useState(false);
 
-  // 🌟 重點：用 localDays 來動態擴張時間窗（起始用 props.recentDays）
+  // 用 localDays 來動態擴張時間窗（起始用 props.recentDays）
   const [localDays, setLocalDays] = useState<number>(recentDays);
 
   // 用 ref 保存最新的 days，避免擴窗後 load() 還讀到舊值
@@ -79,7 +79,7 @@ export default function HighlightsList({
       const qs = new URLSearchParams();
       qs.set('limit', String(pageSize));
       qs.set('q', keywords);
-      qs.set('days', String(localDaysRef.current)); // 👈 用動態時間窗 // [CHANGED] 用 ref 讀最新 days
+      qs.set('days', String(localDaysRef.current)); // 用動態時間窗, 用 ref 讀最新 days
       if (cursor) qs.set('pageToken', cursor);
       // ts 用於躲過中繼層快取
       qs.set('ts', String(Date.now()));
@@ -100,7 +100,7 @@ export default function HighlightsList({
         setPages((prev) => [...prev, unique]);
         setNextPageToken(json.nextPageToken ?? null);
 
-        // 若到達這個時間窗的最後一頁（不論這一頁有沒有新片），視為「打穿時間窗」 // [CHANGED]
+        // 若到達這個時間窗的最後一頁（不論這一頁有沒有新片），視為超過時間窗
         if (!json.nextPageToken) {
           setHitEnd(true);
         }
@@ -138,7 +138,7 @@ export default function HighlightsList({
   // 當超過時間窗時，自動把窗再往前擴 60 天，並立刻開抓新窗第一頁
   useEffect(() => {
     if (hitEnd && localDays > 0) {
-      const nextDays = localDays + 60; // 你可調整 30/60/90
+      const nextDays = localDays + 60; // 可調整 30/60/90
       setHitEnd(false);
       setNextPageToken(null);
       setLocalDays(nextDays);
