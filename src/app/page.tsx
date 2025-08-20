@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic';
 
 import HighlightsControls from './components/HighlightsControls';
+import RecordsTable from './components/RecordsTable';
 
 export default async function Home() {
   // 預設：最近 30 天、最多 50 支、關鍵字=全場精華
@@ -20,6 +21,7 @@ export default async function Home() {
         </p>
       </header>
 
+      <RecordsTable />
       {/* Client 無限載入（避免 SSR + Client 重複載入與重複渲染） */}
       <HighlightsControls />
     </main>
