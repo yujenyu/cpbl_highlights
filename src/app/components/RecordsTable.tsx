@@ -43,8 +43,18 @@ export default function CpblStandingsFragment() {
     );
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-x-auto text-black mb-5">
-      <div dangerouslySetInnerHTML={{ __html: data.html }} />
+    <div className="mb-5 rounded-xl border border-gray-200 bg-white text-black">
+      <div
+        className={[
+          'overflow-x-auto',
+          'max-h-[45vh] overflow-y-auto',
+          'overscroll-contain [scrollbar-gutter:stable]', // 不讓捲動外溢、避免佈局跳動
+          'sm:max-h-none sm:overflow-visible',
+        ].join(' ')}
+        style={{ WebkitOverflowScrolling: 'touch' }} // iOS 慣性捲動
+      >
+        <div dangerouslySetInnerHTML={{ __html: data.html }} />
+      </div>
     </div>
   );
 }
